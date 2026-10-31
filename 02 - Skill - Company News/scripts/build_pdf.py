@@ -15,6 +15,10 @@ import sys
 
 
 def build(content_path, out):
+    # ponytail: the cloud image ships a broken system `cryptography` (no _cffi_backend)
+    # that panics instead of raising ImportError; fpdf2 only wants it for PDF signing,
+    # which the brief never uses. Blocking it makes fpdf2 take its ImportError path.
+    sys.modules.setdefault("cryptography", None)
     try:
         import fpdf  # noqa: F401
     except ImportError:
